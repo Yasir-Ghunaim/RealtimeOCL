@@ -1,0 +1,34 @@
+#!/bin/bash --login
+#SBATCH -N 1
+#SBATCH --partition=batch
+#SBATCH -J PT5
+#SBATCH -o /path/to/output.%J.out
+#SBATCH -e /path/to/error.%J.err
+#SBATCH --time=50:00:00
+#SBATCH --mem=200G
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:a100:2
+#SBATCH --reservation=A100
+#SBATCH --cpus-per-task=12
+
+# activate the conda environment
+module purge
+module load gcc/11.1.0
+conda activate realtime_ocl
+
+# run the application:
+cd ../../..
+python main.py \
+--dataset 'cloc' \
+--batch_size 128 \
+--lr 0.001 \
+--lr_type 'polrs' \
+--batch_delay 5 \
+--gradient_steps 1 \
+--output_dir '/path/to/tensorboard/output' \
+--workers 12 \
+--method 'Replay' \
+--seed 123 \
+--dataset_root '/ibex/ai/reference/CLOC/release/' \
+--size_replay_buffer 40000 \
+--pretrained
