@@ -29,7 +29,7 @@ python main.py \
 --workers 12 \
 --method 'GSS' \
 --seed 123 \
---dataset_root '/ibex/ai/reference/CLOC/release/' \
+--dataset_root '/path/to/CLOC/release/' \
 --GSS_threshold 0.0 \
 --GSS_mem_strength 10 \
 --size_replay_buffer 40000 \

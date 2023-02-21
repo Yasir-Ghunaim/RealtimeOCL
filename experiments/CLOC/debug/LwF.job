@@ -10,7 +10,7 @@ python main.py \
 --workers 12 \
 --method 'LwF' \
 --seed 123 \
---dataset_root '/ibex/ai/reference/CLOC/release/' \
+--dataset_root '/path/to/CLOC/release/' \
 --debug \
 --LwF_warmup 0 \
 --LwF_update_freq 10 \

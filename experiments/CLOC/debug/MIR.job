@@ -10,7 +10,7 @@ python main.py \
 --workers 12 \
 --method 'MIR' \
 --seed 123 \
---dataset_root '/ibex/ai/reference/CLOC/release/' \
+--dataset_root '/path/to/CLOC/release/' \
 --debug \
 --profile_flops \
 --size_replay_buffer 1000

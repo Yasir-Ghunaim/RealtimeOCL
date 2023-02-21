@@ -11,5 +11,5 @@ python main.py \
 --seed 123 \
 --gradient_steps 1 \
 --debug \
---dataset_root '/ibex/ai/reference/CLOC/release/' \
+--dataset_root '/path/to/CLOC/release/' \
 --size_replay_buffer 100
