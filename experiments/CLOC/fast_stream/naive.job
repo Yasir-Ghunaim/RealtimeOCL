@@ -14,7 +14,7 @@
 # activate the conda environment
 module purge
 module load gcc/11.1.0
-conda activate ocl
+conda activate realtime_ocl
 
 # run the application:
 cd ../../..
