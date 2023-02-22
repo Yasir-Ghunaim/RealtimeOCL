@@ -1,4 +1,4 @@
-# Online Continual Learning
+# Real-Time Evaluation in Online Continual Learning: A New Paradigm
 
 ## Requirements
 Install the conda enviornment by running: 
@@ -9,9 +9,11 @@ Install the conda enviornment by running:
     pip install avalanche-lib==0.2.0 deepspeed==0.6.7 tensorboardx
 ```
 
-## Dataset Installation
-We use CLOC dataset for main experiments. To install CLOC, 
-please clone the dataset repo and follow the README instructions: https://github.com/IntelLabs/continuallearning/tree/main/CLOC
+## CLOC Installation
+We use CLOC dataset for main experiments. To install CLOC, please clone the dataset repo and follow the README instructions: https://github.com/IntelLabs/continuallearning/tree/main/CLOC
+
+## CLOC Preprocessing
+Downloading CLOC depends on the availability of a large list of image URLs hosted on Flickr server. After you download CLOC images, most likely, there will be lots of missing images. To ensure fast training time, we recommend removing invalid pointers from the CLOC metadata by following the steps in the notebook "preprocess_CLOC.ipynb"
 
 ## Usage
 This repo is based on the Avalanche framework. We highly recommend skimming over this quick tutorial to understand the basics of Avalanche:
