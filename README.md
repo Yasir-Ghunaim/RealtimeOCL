@@ -1,4 +1,7 @@
-# Real-Time Evaluation in Online Continual Learning: A New Paradigm
+# Real-Time Evaluation in Online Continual Learning: A New Paradigm (CVPR2023)
+A realistic and fair evaluation for Online Continual Learning (OCL), in which the computational cost of OCL methods is incorporated into the training process. That is, more expensive OCL methods than our baseline end up training on proportionally less data.
+
+* [paper](https://arxiv.org/abs/2302.01047)
 
 ## Requirements
 Install the conda enviornment by running: 
@@ -16,7 +19,7 @@ We use CLOC dataset for main experiments. To install CLOC, please clone the data
 Downloading CLOC depends on the availability of a large list of image URLs hosted on Flickr server. After you download CLOC images, most likely, there will be lots of missing images. To ensure fast training time, we recommend removing invalid pointers from the CLOC metadata by following the steps in the notebook "preprocess_CLOC.ipynb"
 
 ## Usage
-This repo is based on the Avalanche framework. We highly recommend skimming over this quick tutorial to understand the basics of Avalanche:
+This repo is based on the Avalanche framework. We highly recommend going over this quick tutorial to understand the basics of Avalanche:
 https://avalanche.continualai.org/from-zero-to-hero-tutorial/01_introduction
 
 The experiment folder is structred as follows:
@@ -29,4 +32,14 @@ For example, fast stream experimens on CLOC are located at:
 experiments/CLOC/fast_stream
 ```
 
-To run experiments, simply activate the conda enviornment and run the experiment bash script in the desired dataset and stream folders.
+To run experiments, simply activate the conda enviornment and run the experiment bash script in the desired dataset/stream folder.
+
+## Cite
+```
+@inproceedings{ghunaim2023real,
+  title={Real-Time Evaluation in Online Continual Learning: A New Paradigm},
+  author={Ghunaim, Yasir and Bibi, Adel and Alhamoud, Kumail and Alfarra, Motasem and Hammoud, Hasan Abed Al Kader and Prabhu, Ameya and Torr, Philip HS and Ghanem, Bernard},
+  booktitle = {Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2023}
+}
+```
