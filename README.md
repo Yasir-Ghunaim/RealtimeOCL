@@ -1,5 +1,5 @@
 # Real-Time Evaluation in Online Continual Learning: A New Paradigm (CVPR2023)
-A realistic and fair evaluation for Online Continual Learning (OCL), in which the computational cost of OCL methods is incorporated into the training process. That is, more expensive OCL methods than our baseline end up training on proportionally less data.
+A realistic and fair evaluation for Online Continual Learning (OCL), in which the computational cost of OCL methods is incorporated into the training process. That is, more expensive OCL methods than our baseline ends up training on proportionally fewer data.
 
 * [paper](https://arxiv.org/abs/2302.01047)
 
