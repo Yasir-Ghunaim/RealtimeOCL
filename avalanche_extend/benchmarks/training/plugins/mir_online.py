@@ -75,7 +75,7 @@ class MIROnlinePlugin(SupervisedPlugin):
         self.device = device
         self.flops = 0
         
-        self.storage_policy = OnlineReservoirSamplingBuffer(max_size=mem_size, input_size=input_size, device=device)
+        self.storage_policy = OnlineReservoirSamplingBuffer(mem_size=mem_size, input_size=input_size, device=device)
         torch.manual_seed(seed)
 
         print("MIR online_augmentation:", online_augmentation)
