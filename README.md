@@ -1,4 +1,4 @@
-# Real-Time Evaluation in Online Continual Learning: A New Paradigm (CVPR2023)
+# Real-Time Evaluation in Online Continual Learning: A New Hope (CVPR2023)
 A realistic and fair evaluation for Online Continual Learning (OCL), in which the computational cost of OCL methods is incorporated into the training process. That is, more expensive OCL methods than our baseline ends up training on proportionally fewer data.
 
 * [paper](https://arxiv.org/abs/2302.01047)
@@ -37,7 +37,7 @@ To run experiments, simply activate the conda enviornment and run the experiment
 ## Cite
 ```
 @inproceedings{ghunaim2023real,
-  title={Real-Time Evaluation in Online Continual Learning: A New Paradigm},
+  title={Real-Time Evaluation in Online Continual Learning: A New Hope},
   author={Ghunaim, Yasir and Bibi, Adel and Alhamoud, Kumail and Alfarra, Motasem and Hammoud, Hasan Abed Al Kader and Prabhu, Ameya and Torr, Philip HS and Ghanem, Bernard},
   booktitle = {Conference on Computer Vision and Pattern Recognition (CVPR)},
   year={2023}
