@@ -258,7 +258,8 @@ def main(args):
             evaluator=eval_plugin,
             batch_delay=args.batch_delay,
             plugins=plugins,
-            gradient_steps=args.gradient_steps
+            gradient_steps=args.gradient_steps,
+            args = args
         )
 
     # ======== Train and Evaluation ========
@@ -294,14 +295,14 @@ def main(args):
     # Save final model
     if not args.debug:
         if args.lr_type == "polrs":
-            for i in range(3):
+            for i in range(args.NOModels):
                 save_dict = {
                     'arch': args.arch,
                     'size_replay_buffer': args.size_replay_buffer,
                     'state_dict': cl_strategy.model_pool[i].state_dict(),
                     'optimizer' : cl_strategy.optim_pool[i].state_dict()
                 }
-                torch.save(save_dict, output_dir + '/model' + str(i) + '.pth.tar')
+                torch.save(save_dict, output_dir + '/final_model' + str(i) + '.pth.tar')
         else:   
             save_dict = {
                 'arch': args.arch,
@@ -309,7 +310,7 @@ def main(args):
                 'state_dict': model.state_dict(),
                 'optimizer' : optimizer.state_dict()
             }
-            torch.save(save_dict, output_dir + '/model.pth.tar')
+            torch.save(save_dict, output_dir + '/final_model.pth.tar')
 
 if __name__ == "__main__":
 

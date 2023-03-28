@@ -36,7 +36,8 @@ class Delay(OnlineStream):
         evaluator: EvaluationPlugin = default_evaluator,
         eval_every=-1,
         batch_delay=0,
-        gradient_steps=1
+        gradient_steps=1,
+        args = None
     ):
         """Init.
 
@@ -72,8 +73,10 @@ class Delay(OnlineStream):
         
         self.batch_delay = batch_delay
         self.gradient_steps = gradient_steps
+        self.train_mb_size = train_mb_size
         self.iteration_counter = 0
         self.training_counter = 0
+        self.args = args
         self.test_model = None
         print("Initializing a Delay instance with batch_delay =", batch_delay, ", and gradient_steps =", self.gradient_steps)
 
@@ -96,6 +99,9 @@ class Delay(OnlineStream):
         """Training epoch.
         """
         self.test_model = self.model
+
+        self.one_third_of_stream = int(len(self.dataloader)/3)
+        self.two_third_of_stream = int(2*len(self.dataloader)/3)
 
         for self.iteration_counter, self.mbatch in enumerate(self.dataloader): 
             if self._stop_training:
@@ -188,3 +194,19 @@ class Delay(OnlineStream):
 
             if self.is_training_batch():
                 self.training_counter += 1
+
+            # Save model checkpoint at 1/3 and 2/3 of the stream for forward transfer
+            if self.iteration_counter == self.one_third_of_stream or self.iteration_counter == self.two_third_of_stream:
+                save_dict = {
+                    'arch': self.args.arch,
+                    'size_replay_buffer': self.args.size_replay_buffer,
+                    'state_dict': self.model.state_dict(),
+                    'optimizer' : self.optimizer.state_dict(),
+                    'next_index': self.mb_index[:self.train_mb_size][-1] + 1
+                }
+                if self.iteration_counter == self.one_third_of_stream:
+                    name = '/checkpoint_33_percent.pth.tar'
+                else:
+                    name = '/checkpoint_67_percent.pth.tar'
+                print("Saving a checkpoint at:", self.args.output_dir + name)
+                torch.save(save_dict, self.args.output_dir + name)
