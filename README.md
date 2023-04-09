@@ -1,7 +1,7 @@
 # Real-Time Evaluation in Online Continual Learning: A New Hope (CVPR2023)
 A realistic and fair evaluation for Online Continual Learning (OCL), in which the computational cost of OCL methods is incorporated into the training process. That is, more expensive OCL methods than our baseline ends up training on proportionally fewer data.
 
-* This work was accepted at CVPR 2023 as a highlight (top 2.5%) paper. [link to preprint](https://arxiv.org/abs/2302.01047)
+### This work was accepted at CVPR 2023 as a highlight (top 2.5%) paper. [link to preprint](https://arxiv.org/abs/2302.01047)
 
 ## Requirements
 Install the conda enviornment by running: 
