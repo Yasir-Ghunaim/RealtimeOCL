@@ -196,17 +196,18 @@ class Delay(OnlineStream):
                 self.training_counter += 1
 
             # Save model checkpoint at 1/3 and 2/3 of the stream for forward transfer
-            if self.iteration_counter == self.one_third_of_stream or self.iteration_counter == self.two_third_of_stream:
-                save_dict = {
-                    'arch': self.args.arch,
-                    'size_replay_buffer': self.args.size_replay_buffer,
-                    'state_dict': self.model.state_dict(),
-                    'optimizer' : self.optimizer.state_dict(),
-                    'next_index': self.mb_index[:self.train_mb_size][-1] + 1
-                }
-                if self.iteration_counter == self.one_third_of_stream:
-                    name = '/checkpoint_33_percent.pth.tar'
-                else:
-                    name = '/checkpoint_67_percent.pth.tar'
-                print("Saving a checkpoint at:", self.args.output_dir + name)
-                torch.save(save_dict, self.args.output_dir + name)
+            if not self.args.debug:
+                if self.iteration_counter == self.one_third_of_stream or self.iteration_counter == self.two_third_of_stream:
+                    save_dict = {
+                        'arch': self.args.arch,
+                        'size_replay_buffer': self.args.size_replay_buffer,
+                        'state_dict': self.model.state_dict(),
+                        'optimizer' : self.optimizer.state_dict(),
+                        'next_index': self.mb_index[:self.train_mb_size][-1] + 1
+                    }
+                    if self.iteration_counter == self.one_third_of_stream:
+                        name = '/checkpoint_33_percent.pth.tar'
+                    else:
+                        name = '/checkpoint_67_percent.pth.tar'
+                    print("Saving a checkpoint at:", self.args.output_dir + name)
+                    torch.save(save_dict, self.args.output_dir + name)

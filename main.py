@@ -377,7 +377,7 @@ if __name__ == "__main__":
     parser.add_argument('--RWalk_warmup', default=0.05, 
 					type=float, help='percentage of the data stream to train on before enabling RWalk')
     parser.add_argument('--RWalk_update_freq', default=1000, 
-					type=int, help='the number of iterations to consider as a single experience')
+					type=int, help='the frequency (in terms of number of iterations) to update RWalk')
     parser.add_argument('--RWalk_ewc_lambda', default=1, 
 					type=float, help='hyperparameter to weigh the penalty inside the RWalk loss')
 

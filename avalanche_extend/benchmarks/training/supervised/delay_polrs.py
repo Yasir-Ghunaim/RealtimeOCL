@@ -473,23 +473,24 @@ class DelayPoLRS(OnlineStream):
             self._after_training_iteration(**kwargs)
 
             # Save model checkpoint at 1/3 and 2/3 of the stream for forward transfer
-            if self.iteration_counter == self.one_third_of_stream or self.iteration_counter == self.two_third_of_stream:
-                for i in range(self.args.NOModels):
-                    save_dict = {
-                        'arch': self.args.arch,
-                        'size_replay_buffer': self.args.size_replay_buffer,
-                        'state_dict': self.model_pool[i].state_dict(),
-                        'optimizer' : self.optim_pool[i].state_dict(),
-                        'next_index': self.mb_index[:self.train_mb_size][-1] + 1,
-                        'idx_best_model': idx_best_model
-                    }
+            if not self.args.debug:
+                if self.iteration_counter == self.one_third_of_stream or self.iteration_counter == self.two_third_of_stream:
+                    for i in range(self.args.NOModels):
+                        save_dict = {
+                            'arch': self.args.arch,
+                            'size_replay_buffer': self.args.size_replay_buffer,
+                            'state_dict': self.model_pool[i].state_dict(),
+                            'optimizer' : self.optim_pool[i].state_dict(),
+                            'next_index': self.mb_index[:self.train_mb_size][-1] + 1,
+                            'idx_best_model': idx_best_model
+                        }
 
-                    if self.iteration_counter == self.one_third_of_stream:
-                        name = '/checkpoint_33_percent' + str(i) + '.pth.tar'
-                    else:
-                        name = '/checkpoint_67_percent' + str(i) + '.pth.tar'
-                    print("Saving a checkpoint at:", self.args.output_dir + name)
-                    torch.save(save_dict, self.args.output_dir + name)
+                        if self.iteration_counter == self.one_third_of_stream:
+                            name = '/checkpoint_33_percent' + str(i) + '.pth.tar'
+                        else:
+                            name = '/checkpoint_67_percent' + str(i) + '.pth.tar'
+                        print("Saving a checkpoint at:", self.args.output_dir + name)
+                        torch.save(save_dict, self.args.output_dir + name)
 
 
         print("Training Loss =",  meter_local['losses'].avg)
