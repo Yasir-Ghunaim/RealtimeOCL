@@ -1,7 +1,7 @@
-# Real-Time Evaluation in Online Continual Learning: A New Hope (CVPR2023)
+# Real-Time Evaluation in Online Continual Learning: A New Hope (CVPR2023, Highlight)
 A realistic and fair evaluation for Online Continual Learning (OCL), in which the computational cost of OCL methods is incorporated into the training process. That is, more expensive OCL methods than our baseline ends up training on proportionally fewer data.
 
-#### This work was accepted at CVPR 2023 as a highlight (top 2.5%) paper. [link to preprint](https://arxiv.org/abs/2302.01047)
+#### This work was accepted at CVPR 2023 as a highlight (top 2.5%) paper. [Link to preprint](https://arxiv.org/abs/2302.01047)
 
 ## Requirements
 Install the conda enviornment by running: 
@@ -13,10 +13,10 @@ Install the conda enviornment by running:
 ```
 
 ## CLOC Installation
-We use CLOC dataset for main experiments. To install CLOC, please clone the dataset repo and follow the README instructions: https://github.com/IntelLabs/continuallearning/tree/main/CLOC
+For our main experiments, we rely on the CLOC dataset. To install CLOC, please clone the dataset repository and follow the instructions provided in the README file, which can be found at the following link: https://github.com/IntelLabs/continuallearning/tree/main/CLOC
 
 ## CLOC Preprocessing
-Downloading CLOC depends on the availability of a large list of image URLs hosted on Flickr server. After you download CLOC images, most likely, there will be lots of missing images. To ensure fast training time, we recommend removing invalid pointers from the CLOC metadata by following the steps in the notebook "preprocess_CLOC.ipynb"
+When downloading CLOC images, it is necessary to access a large list of image URLs hosted on Flickr server. However, due to potential issues such as changes in the availability of the images, it is possible that some images will be missing after the download process is complete. To ensure optimal training time and minimize errors during dataloading, we strongly recommend removing these invalid pointers from the CLOC metadata. This can be accomplished by following the steps outlined in the "preprocess_CLOC.ipynb" notebook.
 
 ## Usage
 This repo is based on the Avalanche framework. We highly recommend going over this quick tutorial to understand the basics of Avalanche:
