@@ -45,6 +45,9 @@ def main(args):
     torch.backends.cudnn.benchmark = False
     torch.cuda.manual_seed_all(args.seed)
 
+    # Flag to enable FLOPS profiler
+    profiler_enabled = args.debug and (args.profile_flops or args.profile_flops_deepcopy)
+
     # Config
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -184,7 +187,10 @@ def main(args):
     # print to stdout
     loggers.append(InteractiveLogger())
 
-    if args.lr_type == "polrs":
+    if args.lr_type == "polrs" or profiler_enabled:
+        # Disable Avalanche metrics
+        # For PoLRS, we follow the implementaiton of the original paper which did not utilize Avalanche (refer to DelayPoLRS)
+        # For the profiler, we disable the metrics, as this could result in inflated FLOPs values
         eval_plugin = EvaluationPlugin(
             loggers=loggers,
             benchmark=scenario,
@@ -215,7 +221,8 @@ def main(args):
     
     elif args.method == "MIR" and args.size_replay_buffer > 0:
         plugins = [MIROnlinePlugin(mem_size=args.size_replay_buffer, batch_size_mem=args.batch_size,
-        input_size=input_size, device=device, online_augmentation=online_augmentation, seed=args.seed)]
+        input_size=input_size, device=device, online_augmentation=online_augmentation,
+        profile=args.profile_flops_deepcopy, seed=args.seed)]
 
     elif args.method == "ACE" and args.size_replay_buffer > 0:
         plugins = [ER_ACE_OnlinePlugin(mem_size=args.size_replay_buffer,
@@ -224,13 +231,14 @@ def main(args):
     elif args.method == "LwF" and args.size_replay_buffer > 0:
         plugins = [ReplayOnlinePlugin(mem_size=args.size_replay_buffer, gradient_steps=math.ceil(args.gradient_steps), 
          batch_delay=args.batch_delay, online_augmentation=online_augmentation, seed=args.seed),
-                    LwFOnlinePlugin(warmup=args.LwF_warmup, update_freq=args.LwF_update_freq, seed=args.seed)]
+                    LwFOnlinePlugin(warmup=args.LwF_warmup, update_freq=args.LwF_update_freq,
+                    profile=args.profile_flops_deepcopy, seed=args.seed)]
 
     elif args.method == "RWalk" and args.size_replay_buffer > 0:
         plugins = [ReplayOnlinePlugin(mem_size=args.size_replay_buffer, gradient_steps=math.ceil(args.gradient_steps), 
          batch_delay=args.batch_delay, online_augmentation=online_augmentation, seed=args.seed),
                     RWalkOnlinePlugin(ewc_lambda=args.RWalk_ewc_lambda, warmup=args.RWalk_warmup,
-                    update_freq=args.RWalk_update_freq, seed=args.seed)]
+                    update_freq=args.RWalk_update_freq, profile=args.profile_flops_deepcopy ,seed=args.seed)]
 
 
     if args.lr_type == "polrs":
@@ -270,11 +278,12 @@ def main(args):
     test_stream = scenario.test_stream
 
     # Start computing the FLOPS used by the selected CL method
-    if args.debug and args.profile_flops:
+    # When profiling methods that deepcopy the model, it is necessary to disable this profiler to prevent interference with the method's internal profiler
+    if profiler_enabled and not args.profile_flops_deepcopy:
         prof = FlopsProfiler(model)
         prof.start_profile()
-        start_time = time.time()
-
+    
+    start_time = time.time()
     # Since we don't use tasks boundaries, the entire stream is loaded to a single experience
     experience = train_stream[0]
 
@@ -283,11 +292,13 @@ def main(args):
     cl_strategy.train(experience, shuffle=False, num_workers=args.workers)
 
     # Evaluate on the held-out test set at the end of training
-    if not args.validation:
+    # Note, during validation (hyperparameter search) or profiling, we don't need to evaluate on the test set
+    if not (args.validation or profiler_enabled):
         results.append(cl_strategy.eval(test_stream, num_workers=args.workers))
    
-    if args.debug and args.profile_flops:
-        print("--- Training completed in %s seconds ---" % (time.time() - start_time))
+    print("--- Training completed in %s seconds ---" % (time.time() - start_time))
+
+    if profiler_enabled and not args.profile_flops_deepcopy:
         prof.stop_profile()
         prof.print_model_profile(detailed=False)
         prof.end_profile()
@@ -362,6 +373,8 @@ if __name__ == "__main__":
 					help='debugging disable tensorboard logging')
     parser.add_argument('--profile_flops', action='store_true',
 					help='estimate the flops for training')
+    parser.add_argument('--profile_flops_deepcopy', action='store_true',
+					help='estimate the flops for methods that use deepcopy of the main model')
     parser.add_argument('--seed', default=0, type=int,
                         help='seed for initializing training. ')
     parser.add_argument('--output_dir', default='./results',

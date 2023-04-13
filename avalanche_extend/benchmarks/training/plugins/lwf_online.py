@@ -17,6 +17,7 @@ import torch
 
 from avalanche.models import avalanche_forward
 from avalanche.training.plugins.strategy_plugin import SupervisedPlugin
+from deepspeed.profiling.flops_profiler import FlopsProfiler
 
 
 class LwFOnlinePlugin(SupervisedPlugin):
@@ -26,7 +27,7 @@ class LwFOnlinePlugin(SupervisedPlugin):
     taken from a previous version of the model.
     """
 
-    def __init__(self, alpha=1, temperature=2, warmup=0.05, update_freq=1000, seed = 0):
+    def __init__(self, alpha=1, temperature=2, warmup=0.05, update_freq=1000, profile = False, seed = 0):
         """
         :param alpha: distillation hyperparameter.
         :param temperature: softmax temperature for distillation
@@ -34,6 +35,7 @@ class LwFOnlinePlugin(SupervisedPlugin):
                        in the online implementation as the model initally will not be suitable for distillation.
         :param update_freq: the frequency (in terms of number of iterations) to update the previous model
                             and seen classes.
+        :param profile: compute the additional flops required by this method
         """
 
         super().__init__()
@@ -45,7 +47,9 @@ class LwFOnlinePlugin(SupervisedPlugin):
         self.prev_model = None
         self.seed = seed
         self.just_finished_warmup = True
+        self.profile_enabled = profile
 
+        self.flops_counter = 0
         self.prev_classes = set()
         self.seen_classes = set()
         """ In Avalanche, targets of different experiences are not ordered. 
@@ -115,6 +119,21 @@ class LwFOnlinePlugin(SupervisedPlugin):
                 # Save copy of model and seen classes every 'update_freq' iterations
                 if self.just_finished_warmup or ((strategy.training_counter + 1) % self.update_freq == 0):
                     self.just_finished_warmup = False
+
+                    if self.profile_enabled and self.prev_model is not None:
+                        self.flops_counter += self.prof.get_total_flops()
+                        self.prof.stop_profile()
+                        self.prof.end_profile()
+                        
                     self.prev_model = copy.deepcopy(strategy.model)
                     self.prev_classes = copy.deepcopy(self.seen_classes)
                     print("Saving new model, with num of classes: ", len(self.prev_classes))
+
+                    if self.profile_enabled:
+                        self.prof = FlopsProfiler(self.prev_model)
+                        self.prof.start_profile()
+
+    def after_training_epoch(self, strategy, **kwargs):
+        if self.profile_enabled:
+            # This calculation excludes the FLOPs required to perform forward passes on the data (i.e., ER baseline FLOPs)  
+            print("The additional fwd flops used by this method is: {:.2f} G".format(self.flops_counter/(10**9)))

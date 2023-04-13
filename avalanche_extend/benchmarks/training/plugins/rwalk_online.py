@@ -19,6 +19,8 @@ import torch.nn.functional as F
 from avalanche.training.plugins.strategy_plugin import SupervisedPlugin
 from avalanche.training.utils import copy_params_dict, zerolike_params_dict
 from avalanche.models.utils import avalanche_forward
+from deepspeed.profiling.flops_profiler import FlopsProfiler
+
 import copy
 
 
@@ -44,7 +46,7 @@ class RWalkOnlinePlugin(SupervisedPlugin):
 
     def __init__(
         self, ewc_lambda: float = 0.1, ewc_alpha: float = 0.9, delta_t: int = 10,
-        warmup=0.05, update_freq: int = 100, seed = 0
+        warmup=0.05, update_freq: int = 100, profile = False, seed = 0
     ):
         """
         :param ewc_lambda: hyperparameter to weigh the penalty inside the total
@@ -59,6 +61,7 @@ class RWalkOnlinePlugin(SupervisedPlugin):
                 in the online implementation as the model initally will not be well trained.
         :param update_freq: the frequency (in terms of number of iterations) to update the 
                 experience information
+        :param profile: compute the additional flops required by this method
         """
 
         super().__init__()
@@ -72,6 +75,7 @@ class RWalkOnlinePlugin(SupervisedPlugin):
         self.warmup = warmup
         self.update_freq = update_freq
         self.init_exp_info = False
+        self.profile_enabled = profile
 
         # Information computed every delta_t
         self.checkpoint_params = None
@@ -92,6 +96,8 @@ class RWalkOnlinePlugin(SupervisedPlugin):
         self.exp_penalties = None
 
         self.internal_counter = 0
+        self.flops_counter = 0
+
 
         torch.manual_seed(seed)
         print("Initializing an RWalkOnlinePlugin instance with ewc_lambda:", 
@@ -201,10 +207,22 @@ class RWalkOnlinePlugin(SupervisedPlugin):
         if (strategy.iteration_counter / len(strategy.dataloader)) > self.warmup:
             if strategy.iteration_counter % (strategy.batch_delay+1) == 0:
                 copied_model = copy.deepcopy(strategy.model)
+
+                if self.profile_enabled:
+                    self.prof = FlopsProfiler(copied_model)
+                    self.prof.start_profile()
+
                 self._update_grad(strategy, copied_model)
                 self._update_importance(strategy, copied_model)
                 self.iter_params = copy_params_dict(copied_model)
                 strategy.optimizer.zero_grad()
+
+                if self.profile_enabled:
+                    self.flops_counter += self.prof.get_total_flops()
+                    self.prof.stop_profile()
+                    self.prof.end_profile()
+
+                
 
     # Add loss penalties (Eq. 8 in the RWalk paper)
     def before_backward(self, strategy, *args, **kwargs):
@@ -244,6 +262,11 @@ class RWalkOnlinePlugin(SupervisedPlugin):
                     self.internal_counter = strategy.iteration_counter
                 
                 self.internal_counter += 1
+
+    def after_training_epoch(self, strategy, **kwargs):
+        if self.profile_enabled:
+            # This calculation excludes the FLOPs required to perform forward passes on the data (i.e., ER baseline FLOPs)  
+            print("The additional fwd flops used by this method is: {:.2f} G".format(self.flops_counter/(10**9)))
 
 
     # Update experience information

@@ -16,6 +16,8 @@ from typing import TYPE_CHECKING
 from avalanche.training.plugins.strategy_plugin import SupervisedPlugin
 from ..storage_policy import OnlineReservoirSamplingBuffer
 from torchvision import transforms
+from deepspeed.profiling.flops_profiler import FlopsProfiler
+
 
 import torch
 import torch.nn.functional as F
@@ -41,14 +43,6 @@ class MIROnlinePlugin(SupervisedPlugin):
 
     The `after_training_iteration` callback is implemented in order to add new
     patterns to the external memory.
-
-    :param mem_size: The total number of patterns to be stored in the external memory.
-    :param batch_size_mem: The number of memory samples to return. In our setup, this parameter
-    is set to equal the training minibatch size. 
-    :param subsample_size: The size of the subset that is sampled from the memory.  
-    :param input_size: The shape of the input sample (e.g. [3, 256, 256]).
-    :param device: The device to use.
-    :param online_augmentation: The augmentation to apply on the fly.
     """
 
     def __init__(
@@ -61,8 +55,20 @@ class MIROnlinePlugin(SupervisedPlugin):
         online_augmentation = transforms.Compose([
             transforms.RandomCrop(224),
             transforms.RandomHorizontalFlip()]),
+        profile = False,
         seed = 0
     ):
+        """
+        :param mem_size: The total number of patterns to be stored in the external memory.
+        :param batch_size_mem: The number of memory samples to return. In our setup, this parameter
+        is set to equal the training minibatch size. 
+        :param subsample_size: The size of the subset that is sampled from the memory.  
+        :param input_size: The shape of the input sample (e.g. [3, 256, 256]).
+        :param device: The device to use.
+        :param online_augmentation: The augmentation to apply on the fly.
+        :param profile: compute the additional flops required by this method
+        """
+
         super().__init__()
         assert batch_size_mem is not None, "batch_size_mem arg is required"
 
@@ -73,8 +79,10 @@ class MIROnlinePlugin(SupervisedPlugin):
             subsample_size = batch_size_mem * size_multiplier
         self.subsample_size = subsample_size
         self.device = device
-        self.flops = 0
+        self.profile_enabled = profile
         
+        self.flops_counter = 0
+
         self.storage_policy = OnlineReservoirSamplingBuffer(mem_size=mem_size, input_size=input_size, device=device)
         torch.manual_seed(seed)
 
@@ -156,6 +164,10 @@ class MIROnlinePlugin(SupervisedPlugin):
                 lr = param_group['lr']
 
             future_model = self.get_future_step_parameters(strategy.model, grad_vector, grad_dims, lr=lr)
+            
+            if self.profile_enabled:
+                prof = FlopsProfiler(future_model)
+                prof.start_profile()
 
             with torch.no_grad():
                 logits_track_pre = strategy.model(buffer_x)
@@ -180,8 +192,20 @@ class MIROnlinePlugin(SupervisedPlugin):
             # Task ID should be 0 for all images
             strategy.mbatch[7] = torch.cat((strategy.mbatch[7], strategy.mbatch[7]), 0)
 
+            if self.profile_enabled:
+                self.flops_counter += prof.get_total_flops()
+                prof.stop_profile()
+                prof.end_profile()
+
     def after_training_iteration(self, strategy, **kwargs):
         # TODO: Ensure that strategy is a Delay instance, otherwise remove the if condition 
         # This condition is used with Delay strategy 
         if strategy.is_training_batch():
             self.storage_policy.update(strategy, **kwargs)
+
+    
+    def after_training_epoch(self, strategy, **kwargs):
+        if self.profile_enabled:
+            # This calculation excludes the FLOPs required to perform forward passes on the data (i.e., ER baseline FLOPs)  
+            print("The additional fwd flops used by this method is: {:.2f} G".format(self.flops_counter/(10**9)))
+
