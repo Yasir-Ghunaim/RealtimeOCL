@@ -193,7 +193,11 @@ class MIROnlinePlugin(SupervisedPlugin):
             strategy.mbatch[7] = torch.cat((strategy.mbatch[7], strategy.mbatch[7]), 0)
 
             if self.profile_enabled:
-                self.flops_counter += prof.get_total_flops()
+                # Note that both strategy.model(buffer_x) and future_model(buffer_x) require
+                # the same number of FLOPs. Since having two separate FlopsProfiler instances 
+                # can lead to inaccurate results, we simply multiply the FLOPs by 2 to account 
+                # for both models. 
+                self.flops_counter += prof.get_total_flops() * 2
                 prof.stop_profile()
                 prof.end_profile()
 
