@@ -47,6 +47,12 @@ def main(args):
 
     # Flag to enable FLOPS profiler
     profiler_enabled = args.debug and (args.profile_flops or args.profile_flops_deepcopy)
+    profiler_deepcopy_enabled = args.debug and args.profile_flops_deepcopy
+
+    if profiler_enabled:
+        print("Enabling FLOPs profling")
+    elif profiler_deepcopy_enabled:
+        print("Enabling FLOPs profling on a method with deepcopy")
 
     # Config
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -222,7 +228,7 @@ def main(args):
     elif args.method == "MIR" and args.size_replay_buffer > 0:
         plugins = [MIROnlinePlugin(mem_size=args.size_replay_buffer, batch_size_mem=args.batch_size,
         input_size=input_size, device=device, online_augmentation=online_augmentation,
-        profile=args.profile_flops_deepcopy, seed=args.seed)]
+        profile=profiler_deepcopy_enabled, seed=args.seed)]
 
     elif args.method == "ACE" and args.size_replay_buffer > 0:
         plugins = [ER_ACE_OnlinePlugin(mem_size=args.size_replay_buffer,
@@ -232,13 +238,13 @@ def main(args):
         plugins = [ReplayOnlinePlugin(mem_size=args.size_replay_buffer, gradient_steps=math.ceil(args.gradient_steps), 
          batch_delay=args.batch_delay, online_augmentation=online_augmentation, seed=args.seed),
                     LwFOnlinePlugin(warmup=args.LwF_warmup, update_freq=args.LwF_update_freq,
-                    profile=args.profile_flops_deepcopy, seed=args.seed)]
+                    profile=profiler_deepcopy_enabled, seed=args.seed)]
 
     elif args.method == "RWalk" and args.size_replay_buffer > 0:
         plugins = [ReplayOnlinePlugin(mem_size=args.size_replay_buffer, gradient_steps=math.ceil(args.gradient_steps), 
          batch_delay=args.batch_delay, online_augmentation=online_augmentation, seed=args.seed),
                     RWalkOnlinePlugin(ewc_lambda=args.RWalk_ewc_lambda, warmup=args.RWalk_warmup,
-                    update_freq=args.RWalk_update_freq, profile=args.profile_flops_deepcopy ,seed=args.seed)]
+                    update_freq=args.RWalk_update_freq, profile=profiler_deepcopy_enabled, seed=args.seed)]
 
 
     if args.lr_type == "polrs":
