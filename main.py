@@ -49,10 +49,10 @@ def main(args):
     profiler_enabled = args.debug and (args.profile_flops or args.profile_flops_deepcopy)
     profiler_deepcopy_enabled = args.debug and args.profile_flops_deepcopy
 
-    if profiler_enabled:
-        print("Enabling FLOPs profling")
-    elif profiler_deepcopy_enabled:
+    if profiler_deepcopy_enabled:
         print("Enabling FLOPs profling on a method with deepcopy")
+    elif profiler_enabled:
+        print("Enabling FLOPs profling")
 
     # Config
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

@@ -117,8 +117,8 @@ class CLOCDataset(Dataset):
             self.store_loc = store_loc
         
         if self.debug:
-            self.labels = self.labels[:10000]
-            self.store_loc = self.store_loc[:10000]
+            self.labels = self.labels[:1000]
+            self.store_loc = self.store_loc[:1000]
 
     def _set_data_idx(self):
         self.data_size = len(self.labels)
