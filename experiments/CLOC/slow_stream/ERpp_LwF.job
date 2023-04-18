@@ -1,7 +1,7 @@
 #!/bin/bash --login
 #SBATCH -N 1
 #SBATCH --partition=batch
-#SBATCH -J npp_RWalk
+#SBATCH -J ERpp_LwF
 #SBATCH -o /path/to/output.%J.out
 #SBATCH -e /path/to/error.%J.err
 #SBATCH --time=40:00:00
@@ -24,7 +24,7 @@ python main.py \
 --lr 0.005 \
 --lr_type 'constant' \
 --batch_delay 0 \
---gradient_steps 2 \
+--gradient_steps 1.33 \
 --output_dir '/path/to/tensorboard/output' \
 --workers 12 \
 --method 'Replay' \

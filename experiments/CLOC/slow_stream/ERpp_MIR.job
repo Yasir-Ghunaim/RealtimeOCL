@@ -1,10 +1,10 @@
 #!/bin/bash --login
 #SBATCH -N 1
 #SBATCH --partition=batch
-#SBATCH -J dnppRWalk
+#SBATCH -J ERpp_MIR
 #SBATCH -o /path/to/output.%J.out
 #SBATCH -e /path/to/error.%J.err
-#SBATCH --time=40:00:00
+#SBATCH --time=55:00:00
 #SBATCH --mem=200G
 #SBATCH --ntasks=1
 #SBATCH --gres=gpu:2
@@ -23,8 +23,8 @@ python main.py \
 --batch_size 128 \
 --lr 0.005 \
 --lr_type 'constant' \
---batch_delay 1 \
---gradient_steps 2 \
+--batch_delay 0 \
+--gradient_steps 2.5 \
 --output_dir '/path/to/tensorboard/output' \
 --workers 12 \
 --method 'Replay' \

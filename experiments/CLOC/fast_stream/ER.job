@@ -1,15 +1,14 @@
 #!/bin/bash --login
 #SBATCH -N 1
 #SBATCH --partition=batch
-#SBATCH -J dnppPoLRS
+#SBATCH -J ER
 #SBATCH -o /path/to/output.%J.out
 #SBATCH -e /path/to/error.%J.err
-#SBATCH --time=40:00:00
+#SBATCH --time=50:00:00
 #SBATCH --mem=200G
 #SBATCH --ntasks=1
 #SBATCH --gres=gpu:2
 #SBATCH --cpus-per-task=12
-
 
 # activate the conda environment
 module purge
@@ -23,8 +22,8 @@ python main.py \
 --batch_size 128 \
 --lr 0.005 \
 --lr_type 'constant' \
---batch_delay 2 \
---gradient_steps 3 \
+--batch_delay 0 \
+--gradient_steps 1 \
 --output_dir '/path/to/tensorboard/output' \
 --workers 12 \
 --method 'Replay' \
