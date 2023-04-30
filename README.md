@@ -1,3 +1,4 @@
+
 # Real-Time Evaluation in Online Continual Learning: A New Hope (CVPR2023, Highlight)
 A realistic and fair evaluation for Online Continual Learning (OCL), in which the computational cost of OCL methods is incorporated into the training process. That is, more expensive OCL methods than our baseline ends up training on proportionally fewer data.
 
@@ -12,27 +13,63 @@ Install the conda enviornment by running:
     pip install avalanche-lib==0.2.0 deepspeed==0.6.7 tensorboardx
 ```
 
-## CLOC Installation
-For our main experiments, we rely on the CLOC dataset. To install CLOC, please clone the dataset repository and follow the instructions provided in the README file, which can be found at the following link: https://github.com/IntelLabs/continuallearning/tree/main/CLOC
-
-## CLOC Preprocessing
-When downloading CLOC images, it is necessary to access a large list of image URLs hosted on Flickr server. However, due to potential issues such as changes in the availability of the images, it is possible that some images will be missing after the download process is complete. To ensure optimal training time and minimize errors during dataloading, we strongly recommend removing these invalid pointers from the CLOC metadata. This can be accomplished by following the steps outlined in the "preprocess_CLOC.ipynb" notebook.
-
 ## Usage
-This repo is based on the Avalanche framework. We highly recommend going over this quick tutorial to understand the basics of Avalanche:
-https://avalanche.continualai.org/from-zero-to-hero-tutorial/01_introduction
+This repo is based on the Avalanche framework. We highly recommend going over [this quick tutorial](https://avalanche.continualai.org/from-zero-to-hero-tutorial/01_introduction) to understand the basics of Avalanche.
 
-The experiment folder is structred as follows:
+To reproduce the experiments in the paper, please perform the following steps:
+
+**Step 1: Install the CLOC dataset**
+
+To install the CLOC dataset, clone the dataset repository from GitHub and follow the instructions provided in the README file, which can be found at the following [link](https://github.com/IntelLabs/continuallearning/tree/main/CLOC).
+
+**Step 2: Preprocess CLOC**
+
+When downloading CLOC images through their download script, it will access a large list of image URLs hosted on Flickr server. However, due to potential issues such as changes in the availability of the images, it is possible that some images will be missing after the download process is complete.
+
+To ensure optimal training time and minimize errors during dataloading, we strongly recommend removing these invalid pointers from the CLOC metadata by running the "[preprocess_CLOC.ipynb](https://github.com/Yasir-Ghunaim/RealtimeOCL/blob/main/preprocess_CLOC.ipynb)" notebook provided in our repo.
+
+**Step 3: Run the experiments**
+
+To reproduce the results presented in Figures 3-5 for our paper, please run the required scripts:
+-   For Fast Stream experiments (Figure 3), check out the following [scripts](https://github.com/Yasir-Ghunaim/RealtimeOCL/tree/main/experiments/CLOC/fast_stream).  
+    
+-   For Fast Stream with Data Normalization (Figure 4), check out the following [scripts](https://github.com/Yasir-Ghunaim/RealtimeOCL/tree/main/experiments/CLOC/fast_stream_norm). ER-- curves can be obtained from these scripts, while ER and other OCL methods curves can be obtained from the Fast Stream scripts mentioned above.
+
+-   For Slow stream experiments (Figure 5), check out the following [scripts](https://github.com/Yasir-Ghunaim/RealtimeOCL/tree/main/experiments/CLOC/slow_stream). ER curve can simply be obtained from the fast stream experiments.
+
+## Project Structure
+
 ```bash
-experiments/<dataset_name>/<stream_name>
+├── avalanche_extend            # Extending Avalanche Framework
+│ ├── benchmarks							
+│ │ ├── classic                 # Benchmark generator for datasets
+│ │ ├── datasets                # Custom dataset definitions 
+│ │ ├── scenarios               # Helpers for benchmark generator  
+│ │ └── training                # Training pipeline and OCL strategies
+│ │     ├── plugins             # OCL strategies
+│ │     └── supervised          # Contains our proposed Delay setup
+│ └── evaluation                # Metrics (e.g., Average Online Accuracy)
+├── experiments                 # Experiments scripts (in SLURM format, but they can also be used as bash scripts.)
+│ ├── CIFAR10
+│ │   ├── fast_stream
+│ │   └── slow_stream
+│ ├── CIFAR100
+│ │   ├── fast_stream
+│ │   └── slow_stream
+│ └── CLOC
+│     ├── fast_stream
+│     ├── fast_stream_norm
+│     └── slow_stream
+├── main.py                     # Instantiate training pipeline, OCL strategies, metrics and loggers 
+├── preprocess_CLOC.ipynb
 ```
 
-For example, fast stream experimens on CLOC are located at:
-```bash
-experiments/CLOC/fast_stream
-```
+## # Measuring Training Complexity and Delay of OCL Methods
+To measure the training complexity of OCL methods, we first manually calculated the number of forward/backward passes for each method. Then, we used the [FlopsProfiler](https://www.deepspeed.ai/tutorials/flops-profiler/) tool for verification.
 
-To run experiments, simply activate the conda enviornment and run the experiment bash script in the desired dataset/stream folder.
+To use FlopsProfiler, please follow our tutorial, which can be found at the following [link](https://github.com/Yasir-Ghunaim/RealtimeOCL/blob/main/measuring_delay.md). 
+
+Please keep in mind that the FlopsProfiler tool has some limitations, as outlined in the tutorial. Thus, it is strongly recommended that you manually calculate the forward/backward passes for each method and then use this tool for verification purposes.
 
 ## Cite
 ```
