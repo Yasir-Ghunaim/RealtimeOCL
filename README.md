@@ -64,7 +64,7 @@ To reproduce the results presented in Figures 3-5 for our paper, please run the 
 ├── preprocess_CLOC.ipynb
 ```
 
-## # Measuring Training Complexity and Delay of OCL Methods
+## Measuring Training Complexity and Delay of OCL Methods
 To measure the training complexity of OCL methods, we first manually calculated the number of forward/backward passes for each method. Then, we used the [FlopsProfiler](https://www.deepspeed.ai/tutorials/flops-profiler/) tool for verification.
 
 To use FlopsProfiler, please follow our tutorial, which can be found at the following [link](https://github.com/Yasir-Ghunaim/RealtimeOCL/blob/main/measuring_delay.md). 
