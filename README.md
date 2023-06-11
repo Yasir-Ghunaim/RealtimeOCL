@@ -20,15 +20,9 @@ To reproduce the experiments in the paper, please perform the following steps:
 
 **Step 1: Install the CLOC dataset**
 
-To install the CLOC dataset, clone the dataset repository from GitHub and follow the instructions provided in the README file, which can be found at the following [link](https://github.com/IntelLabs/continuallearning/tree/main/CLOC).
+To install the CLOC dataset, please follow the instructions [here](https://github.com/hammoudhasan/CLDatasets).
 
-**Step 2: Preprocess CLOC**
-
-When downloading CLOC images through their download script, it will access a large list of image URLs hosted on Flickr server. However, due to potential issues such as changes in the availability of the images, it is possible that some images will be missing after the download process is complete.
-
-To ensure optimal training time and minimize errors during dataloading, we strongly recommend removing these invalid pointers from the CLOC metadata by running the "[preprocess_CLOC.ipynb](https://github.com/Yasir-Ghunaim/RealtimeOCL/blob/main/preprocess_CLOC.ipynb)" notebook provided in our repo.
-
-**Step 3: Run the experiments**
+**Step 2: Run the experiments**
 
 To reproduce the results presented in Figures 3-5 for our paper, please run the required scripts:
 -   For Fast Stream experiments (Figure 3), check out the following [scripts](https://github.com/Yasir-Ghunaim/RealtimeOCL/tree/main/experiments/CLOC/fast_stream).  
