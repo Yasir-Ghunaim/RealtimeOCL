@@ -1,7 +1,7 @@
 #!/bin/bash --login
 #SBATCH -N 1
 #SBATCH --partition=batch
-#SBATCH -J con_0_01
+#SBATCH -J ER_0_01
 #SBATCH -o /path/to/output.%J.out
 #SBATCH -e /path/to/error.%J.err
 #SBATCH --time=3:00:00
@@ -27,6 +27,6 @@ python main.py \
 --gradient_steps 1 \
 --output_dir '/path/to/tensorboard/output' \
 --workers 12 \
---method 'Replay' \
+--method 'ER' \
 --seed 123 \
 --size_replay_buffer 40000

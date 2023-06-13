@@ -27,7 +27,7 @@ python main.py \
 --gradient_steps 1.33 \
 --output_dir '/path/to/tensorboard/output' \
 --workers 12 \
---method 'Replay' \
+--method 'ER' \
 --seed 123 \
 --dataset_root '/path/to/CLOC/release/' \
 --size_replay_buffer 40000 \

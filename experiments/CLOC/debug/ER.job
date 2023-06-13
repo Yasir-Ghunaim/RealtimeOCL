@@ -8,7 +8,7 @@ python main.py \
 --batch_delay 0 \
 --gradient_steps 1 \
 --workers 12 \
---method 'Replay' \
+--method 'ER' \
 --seed 123 \
 --dataset_root '/path/to/CLOC/release/' \
 --debug \

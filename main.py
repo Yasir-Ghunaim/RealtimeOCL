@@ -216,7 +216,7 @@ def main(args):
     plugins = None
 
     print("Using the CL method: ", args.method)
-    if args.method == "Replay" and args.size_replay_buffer > 0:
+    if args.method == "ER" and args.size_replay_buffer > 0:
         plugins = [ReplayOnlinePlugin(mem_size=args.size_replay_buffer, gradient_steps=math.ceil(args.gradient_steps), 
          batch_delay=args.batch_delay, online_augmentation=online_augmentation, seed=args.seed)]
 

@@ -26,7 +26,7 @@ python main.py \
 --lr 0.05 \
 --lr_type 'constant' \
 --workers 6 \
---method 'Replay' \
+--method 'ER' \
 --seed 123 \
 --debug \
 --validation \

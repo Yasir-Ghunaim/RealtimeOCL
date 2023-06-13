@@ -7,7 +7,7 @@ python main.py \
 --lr_type 'polrs' \
 --batch_delay 0 \
 --workers 4 \
---method 'Replay' \
+--method 'ER' \
 --seed 123 \
 --gradient_steps 1 \
 --debug \
