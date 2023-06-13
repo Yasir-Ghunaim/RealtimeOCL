@@ -159,9 +159,9 @@ def main(args):
     if args.pretrained:
         suffix += '_pretrained'
     
-    output_dir = args.output_dir + "/" + suffix
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    output_directory = args.output_dir + "/" + suffix
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
 
     if args.wandb:
         wandbLogger = WandBLogger(
@@ -179,7 +179,7 @@ def main(args):
                 "comment": "REAL_TIME_OCL_REPRODUCE",
             },
             # params={"tags:": [args.method, args.lr_type, args.arch, args.pretrained]},
-            dir=output_dir,
+            dir=output_directory,
         )
         loggers.append(wandbLogger)
 
@@ -187,7 +187,7 @@ def main(args):
     tensorboardLogger = None
     if not args.debug and args.lr_type != "polrs":
         # log to Tensorboard
-        tensorboardLogger = TensorboardLogger(tb_log_dir=output_dir)
+        tensorboardLogger = TensorboardLogger(tb_log_dir=output_directory)
         loggers.append(tensorboardLogger)
 
     # print to stdout
@@ -257,7 +257,7 @@ def main(args):
             device=device,
             evaluator=eval_plugin,
             batch_delay=args.batch_delay,
-            output_dir = output_dir,
+            output_dir = output_directory,
             args = args,
             plugins=plugins
         )
@@ -273,6 +273,7 @@ def main(args):
             batch_delay=args.batch_delay,
             plugins=plugins,
             gradient_steps=args.gradient_steps,
+            output_dir = output_directory,
             args = args
         )
 
@@ -319,7 +320,7 @@ def main(args):
                     'state_dict': cl_strategy.model_pool[i].state_dict(),
                     'optimizer' : cl_strategy.optim_pool[i].state_dict()
                 }
-                torch.save(save_dict, output_dir + '/final_model' + str(i) + '.pth.tar')
+                torch.save(save_dict, output_directory + '/final_model' + str(i) + '.pth.tar')
         else:   
             save_dict = {
                 'arch': args.arch,
@@ -327,7 +328,9 @@ def main(args):
                 'state_dict': model.state_dict(),
                 'optimizer' : optimizer.state_dict()
             }
-            torch.save(save_dict, output_dir + '/final_model.pth.tar')
+            torch.save(save_dict, output_directory + '/final_model.pth.tar')
+
+   
 
 if __name__ == "__main__":
 

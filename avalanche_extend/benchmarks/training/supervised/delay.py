@@ -37,6 +37,7 @@ class Delay(OnlineStream):
         eval_every=-1,
         batch_delay=0,
         gradient_steps=1,
+        output_dir=None,
         args = None
     ):
         """Init.
@@ -57,6 +58,7 @@ class Delay(OnlineStream):
             learning experience.
         :param batch_delay: the number of batches to skip after every training iteration.
         :param gradient_steps: the number of updates per training iteration.
+        :param output_dir: Directory to save model checkpoints
         """
 
         super().__init__(
@@ -76,8 +78,11 @@ class Delay(OnlineStream):
         self.train_mb_size = train_mb_size
         self.iteration_counter = 0
         self.training_counter = 0
+        self.output_dir = output_dir
         self.args = args
         self.test_model = None
+
+        assert self.output_dir != None, "output_dir must be defined."
         print("Initializing a Delay instance with batch_delay =", batch_delay, ", and gradient_steps =", self.gradient_steps)
 
 
@@ -209,5 +214,5 @@ class Delay(OnlineStream):
                         name = '/checkpoint_33_percent.pth.tar'
                     else:
                         name = '/checkpoint_67_percent.pth.tar'
-                    print("Saving a checkpoint at:", self.args.output_dir + name)
-                    torch.save(save_dict, self.args.output_dir + name)
+                    print("Saving a checkpoint at:", self.output_dir + name)
+                    torch.save(save_dict, self.output_dir + name)

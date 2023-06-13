@@ -120,7 +120,7 @@ class DelayPoLRS(OnlineStream):
             `eval` is called every `eval_every` epochs and at the end of the
             learning experience.
         :param batch_delay: the number of batches to skip after every training iteration.
-        :param output_dir: Directory to store Tensorboard output
+        :param output_dir: Directory to save model checkpoints and store Tensorboard output
         """
 
         super().__init__(
@@ -174,6 +174,7 @@ class DelayPoLRS(OnlineStream):
         self.writer = SummaryWriter(out_folder_eval)
         self.test_model = None
 
+        assert self.output_dir != None, "output_dir must be defined."
         print("Initializing a Delay instance with batch_delay =", batch_delay)
 
     def init_online_fit_meters(self):
@@ -489,8 +490,8 @@ class DelayPoLRS(OnlineStream):
                             name = '/checkpoint_33_percent' + str(i) + '.pth.tar'
                         else:
                             name = '/checkpoint_67_percent' + str(i) + '.pth.tar'
-                        print("Saving a checkpoint at:", self.args.output_dir + name)
-                        torch.save(save_dict, self.args.output_dir + name)
+                        print("Saving a checkpoint at:", self.output_dir + name)
+                        torch.save(save_dict, self.output_dir + name)
 
 
         print("Training Loss =",  meter_local['losses'].avg)
