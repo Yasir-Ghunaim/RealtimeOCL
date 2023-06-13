@@ -34,16 +34,16 @@ To reproduce the results presented in Figures 3-5 for our paper, please run the 
 ## Project Structure
 
 ```bash
-├── avalanche_extend            # Extending Avalanche Framework
+├── avalanche_extend                    # Avalanche Framework Extensions
 │ ├── benchmarks							
-│ │ ├── classic                 # Benchmark generator for datasets
-│ │ ├── datasets                # Custom dataset definitions 
-│ │ ├── scenarios               # Helpers for benchmark generator  
-│ │ └── training                # Training pipeline and OCL strategies
-│ │     ├── plugins             # OCL strategies
-│ │     └── supervised          # Contains our proposed Delay setup
-│ └── evaluation                # Metrics (e.g., Average Online Accuracy)
-├── experiments                 # Experiments scripts (in SLURM format, but they can also be used as bash scripts.)
+│ │ ├── classic                         # Benchmark generator for datasets
+│ │ ├── datasets                        # Custom dataset definitions 
+│ │ ├── scenarios                       # Helpers for benchmark generator  
+│ │ └── training                        # Training pipeline and OCL strategies
+│ │     ├── plugins                     # OCL strategies
+│ │     └── supervised                  # Contains our proposed Delay setup
+│ └── evaluation                        # Metrics (e.g., Average Online Accuracy)
+├── experiments                         # Experiments scripts (in SLURM format, but they can also be used as bash scripts.)
 │ ├── CIFAR10
 │ │   ├── fast_stream
 │ │   └── slow_stream
@@ -54,8 +54,8 @@ To reproduce the results presented in Figures 3-5 for our paper, please run the 
 │     ├── fast_stream
 │     ├── fast_stream_norm
 │     └── slow_stream
-├── main.py                     # Instantiate training pipeline, OCL strategies, metrics and loggers 
-├── preprocess_CLOC.ipynb
+├── main.py                             # Instantiate training pipeline, OCL strategies, metrics and loggers 
+├── evaluate_additional_metrics.py      # Evaluates traditional CL metrics (i.e., Backward/Forward Transfer)
 ```
 
 ## Measuring Training Complexity and Delay of OCL Methods
