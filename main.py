@@ -33,6 +33,7 @@ from avalanche.training.plugins import EvaluationPlugin
 from avalanche.evaluation.metrics import loss_metrics
 from avalanche.logging import InteractiveLogger, TensorboardLogger, WandBLogger
 from avalanche.models import SlimResNet18
+from evaluate_additional_metrics import compute_backward_transfer, compute_forward_transfer
 
 def main(args):
     print(args)
@@ -215,7 +216,7 @@ def main(args):
     # Continual learning strategies
     plugins = None
 
-    print("Using the CL method: ", args.method)
+    print(f"Using the CL method: {args.method}")
     if args.method == "ER" and args.size_replay_buffer > 0:
         plugins = [ReplayOnlinePlugin(mem_size=args.size_replay_buffer, gradient_steps=math.ceil(args.gradient_steps), 
          batch_delay=args.batch_delay, online_augmentation=online_augmentation, seed=args.seed)]
@@ -331,6 +332,23 @@ def main(args):
             torch.save(save_dict, output_directory + '/final_model.pth.tar')
 
    
+    # This code computes the backward/forward transfer metric.
+    # The code was written for an ablation study in the appendix section of our paper.
+    # It only works with the CLOC dataset.
+    if args.dataset == "cloc" and not args.debug and not profiler_enabled:
+
+        if args.lr_type == "polrs":
+            # Define Tensorboard for PoLRS, which defines tensorboard logging inside DelayPoLRS 
+            tensorboardLogger = TensorboardLogger(tb_log_dir=output_directory)
+
+        compute_backward_transfer(args, model, scenario, device, tensorboardLogger)
+
+        checkpoint_path = output_directory + '/checkpoint_33_percent.pth.tar'
+        compute_forward_transfer(args, model, scenario, device, tensorboardLogger, checkpoint_path, 33)
+
+        checkpoint_path = output_directory + '/checkpoint_67_percent.pth.tar'
+        compute_forward_transfer(args, model, scenario, device, tensorboardLogger, checkpoint_path, 67)
+
 
 if __name__ == "__main__":
 
