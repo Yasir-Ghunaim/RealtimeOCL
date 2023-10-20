@@ -51,7 +51,7 @@ To reproduce the results presented in Figures 3-5 for our paper, please run the 
 │ │ ├── scenarios                       # Helpers for benchmark generator  
 │ │ └── training                        # Training pipeline and OCL strategies
 │ │     ├── plugins                     # OCL strategies
-│ │     └── supervised                  # Contains our proposed Delay setup
+│ │     └── supervised                  # Contains our proposed fast stream setup (called Delay)
 │ └── evaluation                        # Metrics (e.g., Average Online Accuracy)
 ├── experiments                         # Experiments scripts (in SLURM format, but they can also be used as bash scripts.)
 │ ├── CIFAR10
