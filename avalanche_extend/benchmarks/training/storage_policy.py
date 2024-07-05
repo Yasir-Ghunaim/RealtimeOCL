@@ -16,7 +16,7 @@ import torch
 import numpy as np
 
 if TYPE_CHECKING:
-    from .templates.supervised import SupervisedTemplate
+    from avalanche.training.templates.supervised import SupervisedTemplate
 
 
 class OnlineReservoirSamplingBuffer():

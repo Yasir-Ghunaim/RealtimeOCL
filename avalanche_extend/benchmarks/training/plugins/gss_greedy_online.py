@@ -22,7 +22,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 if TYPE_CHECKING:
-    from ..templates.supervised import SupervisedTemplate
+    from avalanche.training.templates.supervised import SupervisedTemplate
 
 
 class GSS_greedyOnlinePlugin(SupervisedPlugin):
