@@ -25,7 +25,6 @@ python main.py \
 --lr_type 'constant' \
 --batch_delay 0 \
 --gradient_steps 1 \
---output_dir '/path/to/tensorboard/output' \
 --workers 4 \
 --method 'ER' \
 --seed 123 \
