@@ -9,8 +9,7 @@ Install the conda enviornment by running:
 ```bash
     conda create -n realtime_ocl python=3.9
     conda activate realtime_ocl
-    pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
-    pip install avalanche-lib==0.2.0 deepspeed==0.6.7 tensorboardx
+    pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
 ```
 
 ## Usage
