@@ -29,7 +29,7 @@ To ensure optimal training time and minimize errors during dataloading, we stron
 
 **Step 3: Download CLOC cross validation set**
 
-The default CLOC metadata only contains train and test splits. However, if you want to access the cross-validation set that we used, you need to download the metadata files starting with "cross_val_" from the following [Google Cloud Platform (GCP) Bucket](https://console.cloud.google.com/storage/browser/cl-datasets/CLOC_torchsave_order_files?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&prefix=&forceOnObjectsSortingFiltering=false).
+The default CLOC metadata only contains train and test splits. However, if you want to access the cross-validation set that we used, you need to download the metadata files starting with "cross_val_" from the following [link](https://drive.google.com/file/d/1pu8fHz9uCp8z5Ec6sScO3L4y943OZ-il/view?usp=drivesdk).
 
 **Step 4: Run the experiments**
 
